@@ -17,17 +17,18 @@
 
   <main>
     <section class="hero">
-      <div class="hero-badge">One project, tons of real board data.</div>
+      <div class="hero-badge">PCB variation</div>
       <h1>About PCB Variation</h1>
       <p>
-        PCB Variation is my project about assembly bounty + temporal physical
-        fingerprinting. I want to prove a board is real by how it’s built and how it
-        drifts over time. It’s not a portfolio, it’s one focused experiment that I’m
-        building in public.
+        Basically, I’m working on a hardware-based security system that ties software to real physical hardware, not just keys or cloud auth.
+
+Instead of trusting passwords or licenses that can be copied, I use how a device actually behaves. Every PCB and chip has tiny physical differences—timing, noise, drift, stuff you can’t fake in software. I measure those differences over time, not just once, and that becomes a fingerprint for that exact piece of hardware.
+
+The important part is that this fingerprint comes from physics. You can’t clone it, you can’t emulate it properly, and you can’t just copy it onto another machine. If the hardware isn’t the same, it won’t match.
       </p>
       <div class="hero-actions">
-        <a class="btn primary" href="index.html">Back to the project</a>
-        <a class="btn ghost" href="mailto:hello@pcbvariation.org">Talk to me</a>
+        <a class="btn primary" href="index.html">Back to the project stuff</a>
+        <a class="btn ghost" href="mailto:hello@pcbvariation.org">email me</a>
       </div>
     </section>
 
@@ -35,22 +36,22 @@
       <div>
         <h2>What assembly bounty means</h2>
         <p>
-          If a board is actually built and tested, it should earn proof. The bounty part
-          means the hardware itself helps verify the assembly so the work can be trusted.
+          when my pcb board is actually built and tested, i can get proof it works. The bounty part
+          is when the hardware  helps verify the assembly so the work i did can be trusted.
         </p>
       </div>
       <div>
         <h2>Temporal physical fingerprinting</h2>
         <p>
           I measure tiny timing and analog shifts that happen as a board warms up, cools
-          down, and ages. That time-based drift is the fingerprint I’m chasing.
+          down, and gets older. That time-based drift is the fingerprint thing im trying to figure out.
         </p>
       </div>
       <div>
         <h2>Why I’m doing this</h2>
         <p>
           Counterfeits and fake builds are a real thing. I want a cheap, repeatable way
-          to prove a board is legit using physics instead of just a sticker.
+          to prove a board is legit using physics instead of just a sticker and software stuff.
         </p>
       </div>
     </section>
@@ -58,17 +59,17 @@
     <section class="timeline">
       <h2>How I’m building it</h2>
       <ol>
-        <li><strong>Plan the fingerprints.</strong> Pick signals that drift in a measurable way.</li>
-        <li><strong>Build the boards.</strong> Same design, different real-world quirks.</li>
-        <li><strong>Capture the data.</strong> Log time-series traces, not just one snapshot.</li>
-        <li><strong>Analyze the drift.</strong> Find the patterns that stay unique.</li>
-        <li><strong>Prove the build.</strong> Tie it all together in a bounty-style proof.</li>
+        <li><strong>design the test and pcb.</strong> pick signals and lines that differentiate</li>
+        <li><strong>Build the pcb .</strong> Same design, different boards .</li>
+        <li><strong>write down the data.</strong> hopefully get enough.</li>
+        <li><strong>Analyze the drifting in the pcb.</strong> Find the patterns that stay unique so it cant be copyed or it fails.</li>
+        <li><strong>Prove (abtpp) works.</strong> send it to people and make it known.</li>
       </ol>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p>Still in progress, still soldering.</p>
+    <p>Still a work in progress im making the pcb</p>
   </footer>
 </body>
 </html>
