@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nick & Lucas Bin Cleaning – Mount Dora, FL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:       #0d1a14;
+  --bg2:      #111f18;
+  --teal:     #1a4a3a;
+  --teal2:    #246b54;
+  --cyan:     #3eb489;
+  --cyan-lt:  #6fcfac;
+  --brown:    #8b5e3c;
+  --tan:      #c8956a;
+  --tan-lt:   #e8c4a0;
+  --cream:    #f5ede0;
+  --white:    #f0f8f4;
+  --muted:    #7a9e8c;
+  --muted2:   #5a7a6a;
+  --card-bg:  rgba(255,255,255,0.035);
+  --card-border: rgba(62,180,137,0.15);
+  --card-border-tan: rgba(200,149,106,0.2);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ── NAV ─────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 2.5rem;
+  transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: rgba(13,26,20,0.92);
+  backdrop-filter: blur(18px);
+  border-bottom-color: var(--card-border);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.08em;
+  color: var(--white);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.nav-logo .dot { color: var(--tan); }
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-cta {
+  background: var(--cyan);
+  color: var(--bg);
+  padding: 0.55rem 1.4rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.nav-cta:hover { background: var(--cyan-lt); transform: translateY(-1px); }
+
+/* hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+  background: none;
+  border: none;
+}
+.hamburger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(13,26,20,0.97);
+  backdrop-filter: blur(20px);
+  z-index: 99;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.mobile-menu a:hover { color: var(--cyan); }
+.mobile-menu .m-cta {
+  background: var(--cyan);
+  color: var(--bg);
+  padding: 0.8rem 2.5rem;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+}
+
+/* ── HERO ────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 1.5rem 4rem;
+  overflow: hidden;
+}
+
+.parallax-bg {
+  position: absolute;
+  inset: -25%;
+  width: 150%; height: 150%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: drift ease-in-out infinite;
+  pointer-events: none;
+}
+.orb-1 { width:500px;height:500px;background:radial-gradient(circle,rgba(26,74,58,0.5),transparent 70%);top:0%;left:-10%;animation-duration:20s; }
+.orb-2 { width:380px;height:380px;background:radial-gradient(circle,rgba(139,94,60,0.25),transparent 70%);top:50%;left:65%;animation-duration:26s;animation-delay:-9s; }
+.orb-3 { width:650px;height:650px;background:radial-gradient(circle,rgba(17,31,24,0.8),transparent 70%);top:25%;left:20%;animation-duration:35s;animation-delay:-14s; }
+.orb-4 { width:240px;height:240px;background:radial-gradient(circle,rgba(62,180,137,0.15),transparent 70%);top:70%;left:5%;animation-duration:16s;animation-delay:-4s; }
+.orb-5 { width:300px;height:300px;background:radial-gradient(circle,rgba(200,149,106,0.18),transparent 70%);top:8%;left:60%;animation-duration:28s;animation-delay:-11s; }
+
+@keyframes drift {
+  0%,100% { transform:translateY(0) scale(1); }
+  50%      { transform:translateY(-40px) scale(1.04); }
+}
+
+.grid-lines {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(62,180,137,0.03) 1px, transparent 1px),
+    linear-gradient(90deg,rgba(62,180,137,0.03) 1px,transparent 1px);
+  background-size: 55px 55px;
+  pointer-events: none;
+}
+
+.drops {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden;
+}
+.drop {
+  position: absolute;
+  width: 2px;
+  border-radius: 0 0 50% 50%;
+  background: linear-gradient(to bottom,var(--cyan),transparent);
+  animation: fall linear infinite;
+  opacity: 0;
+}
+@keyframes fall {
+  0%   { transform:translateY(-50px); opacity:0; }
+  8%   { opacity:0.5; }
+  92%  { opacity:0.3; }
+  100% { transform:translateY(110vh); opacity:0; }
+}
+
+.hero::after {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(13,26,20,0.75) 100%);
+  pointer-events:none;
+}
+
+.hero-content { position:relative; z-index:2; max-width:700px; margin:0 auto; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(200,149,106,0.1);
+  border: 1px solid rgba(200,149,106,0.4);
+  color: var(--tan-lt);
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  margin-bottom: 1.6rem;
+}
+
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.8rem, 13vw, 9rem);
+  line-height: 0.88;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  margin-bottom: 0.35em;
+}
+.hero h1 .green { color: var(--cyan); }
+.hero h1 .brown { color: var(--tan); }
+
+.hero-sub {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.7;
+  margin: 0 auto 2.5rem;
+  max-width: 440px;
+}
+
+.hero-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--cyan);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.9rem 2.2rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  box-shadow: 0 4px 30px rgba(62,180,137,0.35);
+}
+.btn-primary:hover { transform:translateY(-2px) scale(1.03); background:var(--cyan-lt); box-shadow: 0 8px 40px rgba(62,180,137,0.5); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--tan-lt);
+  border: 1px solid rgba(200,149,106,0.4);
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.8rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-ghost:hover { background: rgba(200,149,106,0.08); border-color: var(--tan); }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 2rem; left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: var(--muted2);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.scroll-line {
+  width: 1px; height: 36px;
+  background: linear-gradient(to bottom,var(--muted2),transparent);
+  animation: pulse-line 2s ease-in-out infinite;
+}
+@keyframes pulse-line { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+/* ── TRUST STRIP ─────────────────────────────── */
+.trust-strip {
+  background: var(--teal);
+  border-top: 1px solid rgba(62,180,137,0.2);
+  border-bottom: 1px solid rgba(62,180,137,0.2);
+  padding: 1.1rem 1.5rem;
+  overflow: hidden;
+}
+.trust-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--cyan-lt);
+  white-space: nowrap;
+}
+.trust-item span { font-size: 1rem; }
+
+/* ── SHARED SECTION STYLES ───────────────────── */
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+}
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tan);
+  margin-bottom: 0.7rem;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  line-height: 0.95;
+  color: var(--white);
+  margin-bottom: 1.2rem;
+}
+.section-desc {
+  color: var(--muted);
+  max-width: 540px;
+  line-height: 1.75;
+  font-size: 0.97rem;
+}
+
+/* ── HOW IT WORKS ────────────────────────────── */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 1.25rem;
+  margin-top: 3rem;
+}
+.step-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 1.8rem 1.4rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s, border-color 0.25s, background 0.25s;
+}
+.step-card:hover { transform:translateY(-5px); border-color:rgba(62,180,137,0.4); background:rgba(62,180,137,0.05); }
+.step-card::before {
+  content:'';
+  position:absolute;
+  top:-50px; right:-50px;
+  width:120px; height:120px;
+  border-radius:50%;
+  background: radial-gradient(circle,rgba(200,149,106,0.1) 0%,transparent 70%);
+}
+.step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.2rem;
+  color: rgba(62,180,137,0.12);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.step-icon { font-size: 1.9rem; margin-bottom: 0.7rem; }
+.step-card h3 { font-size:1rem; font-weight:600; color:var(--white); margin-bottom:0.45rem; }
+.step-card p  { font-size:0.87rem; color:var(--muted); line-height:1.65; }
+
+/* ── FULL-WIDTH DIVIDER SECTION ──────────────── */
+.full-section {
+  padding: 5rem 1.5rem;
+}
+.full-section-inner { max-width:1100px; margin:0 auto; }
+
+/* ── PRICING ─────────────────────────────────── */
+.pricing-bg {
+  background: linear-gradient(160deg, rgba(26,74,58,0.3) 0%, rgba(13,26,20,0) 60%);
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.pricing-card {
+  margin-top: 3rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(62,180,137,0.2);
+  border-radius: 28px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.pricing-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--cyan),var(--tan));
+  border-radius:28px 28px 0 0;
+}
+.pricing-card::after {
+  content:'';
+  position:absolute; bottom:-60px; right:-60px;
+  width:220px; height:220px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(139,94,60,0.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.pricing-layout {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.pricing-card h3 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2.2rem;
+  letter-spacing:0.04em;
+  color:var(--white);
+  margin-bottom:0.5rem;
+}
+.pricing-card > .pricing-layout > div:first-child > p {
+  color:var(--muted); font-size:0.94rem; max-width:480px; line-height:1.65; margin-bottom:1.5rem;
+}
+.price-features {
+  list-style:none;
+  display:flex; flex-direction:column; gap:0.55rem;
+}
+.price-features li {
+  font-size:0.92rem;
+  color:var(--muted);
+  display:flex; align-items:center; gap:0.6rem;
+}
+.price-features li::before {
+  content:'';
+  display:inline-block;
+  width:16px; height:16px;
+  border-radius:50%;
+  background:rgba(62,180,137,0.15);
+  border:1px solid var(--cyan);
+  flex-shrink:0;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4l2.5 2.5L9 1' stroke='%233eb489' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:center;
+}
+
+.price-box { text-align:center; flex-shrink:0; }
+.price-amount {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:5.5rem;
+  line-height:1;
+  color:var(--tan-lt);
+  text-shadow:0 0 40px rgba(200,149,106,0.3);
+}
+.price-per { font-size:0.82rem; color:var(--muted); margin-top:0.2rem; }
+.price-box .btn-primary { margin-top:1.6rem; white-space:nowrap; }
+
+/* ── TEAM ────────────────────────────────────── */
+.team-grid {
+  display:grid;
+  grid-template-columns: repeat(2,1fr);
+  gap:1.5rem;
+  margin-top:3rem;
+}
+.team-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border-tan);
+  border-radius:24px;
+  padding:2.2rem 1.8rem;
+  text-align:center;
+  transition: transform 0.25s, border-color 0.25s;
+  position:relative;
+  overflow:hidden;
+}
+.team-card:hover { transform:translateY(-6px); border-color:rgba(200,149,106,0.5); }
+.team-card::before {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0; height:40%;
+  background: radial-gradient(ellipse at bottom,rgba(139,94,60,0.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+.avatar {
+  width:84px; height:84px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--teal2),var(--cyan));
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--bg);
+  margin:0 auto 1.1rem;
+  box-shadow:0 0 30px rgba(62,180,137,0.2);
+  border:2px solid rgba(62,180,137,0.3);
+}
+.team-tag {
+  display:inline-block;
+  background:rgba(200,149,106,0.1);
+  color:var(--tan-lt);
+  font-size:0.7rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase;
+  padding:0.25rem 0.75rem; border-radius:999px;
+  border:1px solid rgba(200,149,106,0.25);
+}
+.team-card h3 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2rem; letter-spacing:0.04em; color:var(--white); margin:0.6rem 0 0.2rem;
+}
+.team-card p { font-size:0.88rem; color:var(--muted); line-height:1.65; margin-top:0.7rem; }
+
+/* ── DIVIDER ─────────────────────────────────── */
+.divider {
+  max-width:1100px; margin:0 auto;
+  border:none;
+  border-top:1px solid rgba(62,180,137,0.1);
+}
+
+/* ── CONTACT ─────────────────────────────────── */
+.contact-bg {
+  background: linear-gradient(160deg, rgba(139,94,60,0.07) 0%, rgba(13,26,20,0) 50%);
+  border-top:1px solid var(--card-border-tan);
+}
+.contact-grid {
+  display:grid;
+  grid-template-columns:1fr 1.1fr;
+  gap:2.5rem;
+  margin-top:3rem;
+  align-items:start;
+}
+.contact-info-list {
+  display:flex; flex-direction:column; gap:0.9rem;
+}
+.contact-item {
+  display:flex; align-items:flex-start; gap:1rem;
+  padding:1.1rem 1.3rem;
+  background:var(--card-bg);
+  border:1px solid var(--card-border-tan);
+  border-radius:16px;
+  transition:border-color 0.2s, background 0.2s;
+}
+.contact-item:hover { border-color:rgba(200,149,106,0.4); background:rgba(200,149,106,0.04); }
+.contact-icon { font-size:1.3rem; flex-shrink:0; margin-top:2px; }
+.contact-label { font-size:0.68rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--tan); margin-bottom:0.2rem; }
+.contact-value { font-size:0.95rem; color:var(--white); font-weight:500; }
+.contact-value.ph { color:var(--muted); font-style:italic; font-weight:300; }
+
+/* Form */
+.contact-form {
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--card-border);
+  border-radius:24px;
+  padding:2.2rem;
+}
+.contact-form h3 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.9rem; color:var(--white); margin-bottom:1.5rem;
+  display:flex; align-items:center; gap:0.5rem;
+}
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.9rem; }
+.form-group { margin-bottom:1.1rem; }
+.form-group label {
+  display:block; font-size:0.75rem; font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:0.4rem;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(62,180,137,0.18);
+  border-radius:12px;
+  padding:0.8rem 1rem;
+  color:var(--white);
+  font-family:'Outfit',sans-serif; font-size:0.95rem;
+  outline:none;
+  transition:border-color 0.2s,background 0.2s;
+  -webkit-appearance:none;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder { color:rgba(122,158,140,0.45); }
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus { border-color:var(--cyan); background:rgba(62,180,137,0.06); }
+.form-group textarea { min-height:90px; resize:vertical; }
+.form-group select { color:var(--white); }
+.form-group select option { background:var(--bg2); color:var(--white); }
+
+.submit-btn {
+  width:100%;
+  background:var(--cyan);
+  color:var(--bg);
+  font-family:'Outfit',sans-serif;
+  font-weight:700; font-size:1rem;
+  padding:0.95rem 2rem;
+  border:none; border-radius:12px;
+  cursor:pointer;
+  transition:transform 0.2s, box-shadow 0.2s, background 0.2s;
+  box-shadow:0 4px 20px rgba(62,180,137,0.3);
+  margin-top:0.3rem;
+  letter-spacing:0.02em;
+}
+.submit-btn:hover { transform:translateY(-2px); box-shadow:0 8px 36px rgba(62,180,137,0.5); background:var(--cyan-lt); }
+.submit-btn:active { transform:scale(0.98); }
+
+/* ── FOOTER ──────────────────────────────────── */
+footer {
+  border-top:1px solid rgba(62,180,137,0.1);
+  padding:2.5rem 1.5rem;
+  text-align:center;
+  color:var(--muted2);
+  font-size:0.84rem;
+}
+footer strong { color:var(--cyan-lt); }
+.footer-inner { max-width:1100px; margin:0 auto; }
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media (max-width:960px) {
+  .steps { grid-template-columns:repeat(2,1fr); }
+  .pricing-layout { grid-template-columns:1fr; }
+  .price-box { text-align:left; display:flex; align-items:center; gap:2rem; flex-wrap:wrap; }
+  .contact-grid { grid-template-columns:1fr; }
+}
+
+@media (max-width:700px) {
+  nav { padding:1rem 1.2rem; }
+  .nav-links, .nav-cta { display:none; }
+  .hamburger { display:flex; }
+
+  .hero { padding:5rem 1.2rem 3.5rem; min-height:100svh; }
+  .hero h1 { font-size: clamp(3.5rem, 18vw, 6rem); }
+  .hero-sub { font-size:1rem; }
+
+  .trust-inner { gap:1.2rem; }
+  .trust-item { font-size:0.78rem; }
+
+  .section { padding:3.5rem 1.2rem; }
+  .full-section { padding:3.5rem 1.2rem; }
+  .section-title { font-size: clamp(2rem,10vw,3rem); }
+
+  .steps { grid-template-columns:1fr; gap:1rem; }
+  .step-card { padding:1.5rem 1.2rem; }
+
+  .pricing-card { padding:1.8rem 1.3rem; border-radius:20px; }
+  .pricing-card h3 { font-size:1.8rem; }
+  .price-amount { font-size:4rem; }
+  .price-box { flex-direction:column; align-items:flex-start; gap:0.5rem; }
+  .price-box .btn-primary { width:100%; justify-content:center; }
+
+  .team-grid { grid-template-columns:1fr; }
+  .team-card { padding:1.8rem 1.4rem; }
+
+  .contact-form { padding:1.6rem 1.2rem; border-radius:20px; }
+  .form-row { grid-template-columns:1fr; gap:0; }
+
+  .scroll-hint { display:none; }
+}
+
+@media (max-width:380px) {
+  .hero h1 { font-size:3.2rem; }
+  .hero-btns { flex-direction:column; width:100%; }
+  .btn-primary, .btn-ghost { width:100%; justify-content:center; }
+  .trust-inner { flex-direction:column; gap:0.8rem; align-items:flex-start; padding-left:1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">CLEAN<span class="dot">·</span>BINS</a>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#team">The Guys</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Book Now — $35</a>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#how" class="mm-link">How It Works</a>
+  <a href="#pricing" class="mm-link">Pricing</a>
+  <a href="#team" class="mm-link">The Guys</a>
+  <a href="#contact" class="m-cta mm-link">Book Now — $35</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="parallax-bg" id="parallaxBg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div class="orb orb-5"></div>
+  </div>
+  <div class="grid-lines"></div>
+  <div class="drops" id="drops"></div>
+
+  <div class="hero-content">
+    <div class="badge">📍 Mount Dora, Florida · Local &amp; Trusted</div>
+    <h1>TRASH BIN<br><span class="green">CLEANING</span><br><span class="brown">DONE RIGHT</span></h1>
+    <p class="hero-sub">Nick &amp; Lucas keep your curbside bins spotless. Affordable, local, and thorough every single time.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">
+        Book a Clean — $35
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#how" class="btn-ghost">See How It Works</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-inner">
+    <div class="trust-item"><span>✅</span> Same-Day Confirmation</div>
+    <div class="trust-item"><span>💧</span> Eco-Friendly Products</div>
+    <div class="trust-item"><span>🌿</span> Locally Owned &amp; Operated</div>
+    <div class="trust-item"><span>💰</span> Flat Rate — No Surprises</div>
+    <div class="trust-item"><span>📍</span> Mount Dora, FL</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section" id="how">
+  <p class="section-label">The Process</p>
+  <h2 class="section-title">HOW IT WORKS</h2>
+  <p class="section-desc">Book online, we show up on schedule, and your bins come back cleaner than the day you got them. Simple.</p>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-icon">📅</div>
+      <h3>Book Online</h3>
+      <p>Fill out the form below — takes 60 seconds. We'll confirm your slot the same day.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-icon">🚐</div>
+      <h3>We Show Up</h3>
+      <p>Nick &amp; Lucas arrive on time with high-pressure gear and eco-friendly cleaners.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-icon">💧</div>
+      <h3>Deep Clean</h3>
+      <p>Full pressure-wash inside and out, hot water treatment, deodorized and sanitized.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">04</div>
+      <div class="step-icon">✅</div>
+      <h3>Fresh &amp; Done</h3>
+      <p>We let you know when finished. No mess left behind — just spotless bins.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PRICING -->
+<div class="full-section pricing-bg" id="pricing">
+  <div class="full-section-inner">
+    <p class="section-label">Simple Pricing</p>
+    <h2 class="section-title">ONE FLAT RATE</h2>
+    <p class="section-desc">Two bins, one price. No contracts, no add-on fees. Just clean bins in Mount Dora and surrounding areas.</p>
+
+    <div class="pricing-card">
+      <div class="pricing-layout">
+        <div>
+          <h3>Standard Clean</h3>
+          <p>Our full deep-clean service — high-pressure hot water wash, eco deodorizer treatment, inside and out. The only service we offer, and we do it perfectly.</p>
+          <ul class="price-features">
+            <li>2 bins included in the flat rate</li>
+            <li>High-pressure hot water wash inside &amp; out</li>
+            <li>Eco-friendly deodorizer &amp; sanitizer</li>
+            <li>Serving Mount Dora &amp; surrounding areas</li>
+            <li>Extra bins? Just ask us for a quote</li>
+          </ul>
+        </div>
+        <div class="price-box">
+          <div class="price-amount">$35</div>
+          <div class="price-per">per visit · 2 bins</div>
+          <a href="#contact" class="btn-primary">Book This Clean</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM -->
+<div class="section" id="team">
+  <p class="section-label">Your Local Crew</p>
+  <h2 class="section-title">MEET THE GUYS</h2>
+  <p class="section-desc">Two Mount Dora locals who care about doing the job right. No shortcuts, no excuses.</p>
+
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="avatar">N</div>
+      <span class="team-tag">Co-founder</span>
+      <h3>Nick</h3>
+      <p>The detail guy. Nick makes sure every corner of every bin is spotless before moving on. Mount Dora born and raised, obsessed with quality.</p>
+    </div>
+    <div class="team-card">
+      <div class="avatar">L</div>
+      <span class="team-tag">Co-founder</span>
+      <h3>Lucas</h3>
+      <p>The logistics king. Lucas handles scheduling, routing, and making sure every customer is taken care of on time, every time.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CONTACT -->
+<div class="full-section contact-bg" id="contact">
+  <div class="full-section-inner">
+    <p class="section-label">Get In Touch</p>
+    <h2 class="section-title">BOOK YOUR CLEAN</h2>
+    <p class="section-desc">Ready to ditch the dirty bins? Fill out the form or reach us directly below.</p>
+
+    <div class="contact-grid">
+      <!-- Info -->
+      <div>
+        <div class="contact-info-list">
+
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <div class="contact-label">Phone</div>
+              <!-- ✏️ Replace below -->
+              <div class="contact-value ph">Add your phone number here</div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon">📧</div>
+            <div>
+              <div class="contact-label">Email</div>
+              <!-- ✏️ Replace below -->
+              <div class="contact-value ph">Add your email address here</div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <div class="contact-label">Service Area</div>
+              <div class="contact-value">Mount Dora, FL &amp; surrounding areas</div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon">🕐</div>
+            <div>
+              <div class="contact-label">Hours</div>
+              <!-- ✏️ Replace below -->
+              <div class="contact-value ph">Add your hours here</div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon">📱</div>
+            <div>
+              <div class="contact-label">Social Media</div>
+              <!-- ✏️ Replace below -->
+              <div class="contact-value ph">Add Instagram / Facebook here</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="contact-form">
+        <h3>Request a Booking 🗓</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" placeholder="Jane">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Smith">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="(352) 555-0000">
+        </div>
+        <div class="form-group">
+          <label>Street Address</label>
+          <input type="text" placeholder="123 Oak St, Mount Dora, FL">
+        </div>
+        <div class="form-group">
+          <label>Number of Bins</label>
+          <select>
+            <option>2 bins — $35</option>
+            <option>3 bins — contact for quote</option>
+            <option>4+ bins — contact for quote</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message (optional)</label>
+          <textarea placeholder="Preferred days, special notes, etc."></textarea>
+        </div>
+        <button class="submit-btn" type="button">Send Booking Request →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <p>© 2025 <strong>Nick &amp; Lucas Bin Cleaning</strong> · Mount Dora, FL · All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+// Scroll parallax
+const parallaxBg = document.getElementById('parallaxBg');
+window.addEventListener('scroll', () => {
+  parallaxBg.style.transform = `translateY(${window.scrollY * 0.3}px)`;
+}, { passive: true });
+
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+// Mouse parallax (desktop only)
+if (window.innerWidth > 700) {
+  document.addEventListener('mousemove', e => {
+    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    const dx = (e.clientX - cx) / cx, dy = (e.clientY - cy) / cy;
+    parallaxBg.querySelectorAll('.orb').forEach((b, i) => {
+      const d = (i + 1) * 8;
+      b.style.transform = `translate(${dx * d}px, ${dy * d}px)`;
+    });
+  }, { passive: true });
+}
+
+// Water drops
+const dropsEl = document.getElementById('drops');
+for (let i = 0; i < 20; i++) {
+  const d = document.createElement('div');
+  d.className = 'drop';
+  d.style.cssText = `left:${Math.random()*100}%;height:${16+Math.random()*36}px;animation-duration:${3.5+Math.random()*6}s;animation-delay:${-Math.random()*9}s;`;
+  dropsEl.appendChild(d);
+}
+
+// Hamburger / mobile menu
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  const open = mobileMenu.classList.toggle('open');
+  hamburger.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+mobileMenu.querySelectorAll('.mm-link').forEach(a => {
+  a.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    hamburger.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+</script>
+</body>
+</html>
