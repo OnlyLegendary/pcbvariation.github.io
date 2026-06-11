@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trombone Slide Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1A1A1C;
+    --surface: #242428;
+    --parchment: #F0E6C8;
+    --staff-line: #2A2A2E;
+    --gold: #C9962A;
+    --gold-light: #E8B84B;
+    --note-fill: #1A1A1C;
+    --text: #F0E6C8;
+    --muted: #6B7280;
+    --correct: #4CAF82;
+    --wrong: #E05C5C;
+    --slide-btn: #2E2E34;
+    --slide-hover: #3A3A42;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    gap: 0;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    color: var(--gold-light);
+    letter-spacing: 0.02em;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── Staff card ── */
+  .staff-card {
+    background: var(--parchment);
+    border-radius: 8px;
+    padding: 20px 32px;
+    width: 100%;
+    max-width: 640px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #staff-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
+  /* ── Note label ── */
+  .note-label {
+    text-align: center;
+    margin-top: 14px;
+    height: 26px;
+    font-size: 1rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Feedback strip ── */
+  .feedback {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    transition: opacity 0.3s;
+    opacity: 0;
+    margin-top: 6px;
+  }
+  .feedback.show { opacity: 1; }
+  .feedback.correct { color: var(--correct); }
+  .feedback.wrong   { color: var(--wrong); }
+
+  /* ── Slide buttons ── */
+  .slide-section {
+    text-align: center;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .slide-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .slide-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .slide-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    background: var(--slide-btn);
+    border: 2px solid #3A3A42;
+    color: var(--text);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+
+  .slide-btn:hover {
+    background: var(--slide-hover);
+    border-color: var(--gold);
+  }
+
+  .slide-btn:active { transform: scale(0.93); }
+
+  .slide-btn.flash-correct {
+    background: var(--correct);
+    border-color: var(--correct);
+    animation: popIn 0.25s ease;
+  }
+  .slide-btn.flash-wrong {
+    background: var(--wrong);
+    border-color: var(--wrong);
+    animation: shake 0.3s ease;
+  }
+
+  @keyframes popIn {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%      { transform: translateX(-5px); }
+    75%      { transform: translateX(5px); }
+  }
+
+  /* ── Score ── */
+  .score-bar {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin-top: 22px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .score-bar span { color: var(--text); font-weight: 600; font-size: 1rem; }
+
+  /* ── Next button ── */
+  .next-btn {
+    margin-top: 20px;
+    background: none;
+    border: 1.5px solid var(--gold);
+    color: var(--gold-light);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .next-btn.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .next-btn:hover { background: var(--gold); color: #1A1A1C; }
+
+  /* ── Note enter animation ── */
+  @keyframes noteIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .note-anim { animation: noteIn 0.35s ease forwards; }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .slide-btn { width: 52px; height: 52px; font-size: 1.25rem; }
+    .staff-card { padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Trombone Slide Trainer</h1>
+  <p class="subtitle">Bass Clef · Sight Reading</p>
+</header>
+
+<!-- Staff display -->
+<div class="staff-card">
+  <svg id="staff-svg" viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg">
+    <!-- Staff lines drawn in JS -->
+    <g id="staff-lines"></g>
+    <!-- Bass clef -->
+    <g id="bass-clef"></g>
+    <!-- Note -->
+    <g id="note-group"></g>
+  </svg>
+</div>
+
+<div class="note-label" id="note-label">Loading…</div>
+<div class="feedback" id="feedback"></div>
+
+<!-- Slide buttons -->
+<div class="slide-section">
+  <div class="slide-label">Choose your slide position</div>
+  <div class="slide-buttons" id="slide-buttons"></div>
+</div>
+
+<button class="next-btn" id="next-btn">Next note →</button>
+
+<!-- Score -->
+<div class="score-bar">
+  ✓ <span id="score-correct">0</span> &nbsp;|&nbsp; ✗ <span id="score-wrong">0</span>
+</div>
+
+<script>
+/* ───────────────────────────────────────────
+   TROMBONE SLIDE POSITIONS (Bass Clef)
+   Standard Bb trombone, concert pitch.
+
+   Staff coordinate system:
+   The 5 staff lines sit at y = 30, 46, 62, 78, 94  (top to bottom).
+   Space between lines = 16px.
+   Middle line (3rd) = y=62. Space above bottom line = spaces.
+
+   Note y positions (center of notehead):
+   We define a "step" scale where each line/space is 8px apart.
+   Bottom staff line (E2) = y=94
+   Each half-step up in diatonic = -8px.
+   
+   Bass clef bottom line = E2 (slide 1 open).
+   Diatonic steps up from E2:
+     E2  y=94   (line 1)
+     F2  y=86   (space 1)
+     G2  y=78   (line 2)
+     A2  y=70   (space 2)
+     B2  y=62   (line 3, middle)  ← Bb = slide 1
+     C3  y=54   (space 3)
+     D3  y=46   (line 4)
+     Eb3 y=38   (space 4)
+     E3  y=30   (line 5)
+     F3  y=22   (space above)
+     G3  y=14   (ledger above)
+     
+   Ledger lines below:
+     D2  y=102  (space below bottom line)
+     C2  y=110  (ledger line below 1)
+     Bb1 y=118  (space below ledger)
+     A1  y=126  (2nd ledger below)
+
+   NOTE: slides shown as the PRIMARY slide position for that concert pitch.
+   Trombone Bb: positions 1–7.
+   Position chart (concert pitch, Bb trombone):
+     1: Bb1, Bb2, Bb3, F3
+     1 (alt): E3
+     2: A1,  A2,  E3,  Eb3
+     3: Ab1, Ab2, Eb3, D3
+     4: G1,  G2,  D3,  Db3
+     5: Gb1, Gb2, Db3, C3
+     6: F1,  F2,  C3,  B2
+     7: E1,  E2,  B2,  Bb2 (alt: 1st)
+     
+   We'll keep notes in a comfortable range and avoid enharmonic ambiguity.
+───────────────────────────────────────────*/
+
+const STAFF_Y = [94, 78, 62, 46, 30]; // line y-coords, bottom to top (E2,G2,B2,D3,F3... wait, recalc)
+// Actually standard bass clef lines bottom-to-top: G1, B1, D2, F2, A2
+// Let me redo with correct bass clef:
+// Bass clef staff lines (bottom to top): G1, B1, D2, F2, A2
+// Spaces (bottom to top): A1, C2, E2, G2  (below, between)
+// Above top line: B2 (space), D3 (ledger)
+// Below bottom line: F1 (space), E1 (ledger)
+
+// Staff line y positions (bottom=94, each line 16px apart):
+// Line 1 (G1) = y94
+// Line 2 (B1) = y78
+// Line 3 (D2) = y62
+// Line 4 (F2) = y46
+// Line 5 (A2) = y30
+// Space: A1=102 (below line1), C2=86, E2=70, G2=54, B2=38 (above line5), D3=22, F3=6
+// Ledger below: F1=110
+
+const NOTES = [
+  // Name, display, y-center, slide, ledger lines needed
+  { name:'Bb1', display:'Bb₁', y:118, slide:1, ledgers:[-1], accidental:'b' },
+  { name:'B1',  display:'B₁',  y:110, slide:7, ledgers:[-1], accidental:null },
+  { name:'C2',  display:'C₂',  y:102, slide:6, ledgers:[],   accidental:null },
+  { name:'D2',  display:'D₂',  y:86,  slide:5, ledgers:[],   accidental:null },
+  { name:'Eb2', display:'Eb₂', y:86,  slide:4, ledgers:[],   accidental:'b' },
+  { name:'E2',  display:'E₂',  y:78,  slide:3, ledgers:[],   accidental:null },
+  { name:'F2',  display:'F₂',  y:70,  slide:2, ledgers:[],   accidental:null },
+  { name:'Gb2', display:'Gb₂', y:70,  slide:1, ledgers:[],   accidental:'b' },
+  { name:'G2',  display:'G₂',  y:62,  slide:7, ledgers:[],   accidental:null },
+  { name:'Ab2', display:'Ab₂', y:62,  slide:6, ledgers:[],   accidental:'b' },
+  { name:'A2',  display:'A₂',  y:54,  slide:5, ledgers:[],   accidental:null },
+  { name:'Bb2', display:'Bb₂', y:46,  slide:4, ledgers:[],   accidental:'b' },
+  { name:'B2',  display:'B₂',  y:46,  slide:2, ledgers:[],   accidental:null },
+  { name:'C3',  display:'C₃',  y:38,  slide:6, ledgers:[],   accidental:null },
+  { name:'D3',  display:'D₃',  y:30,  slide:5, ledgers:[],   accidental:null },
+  { name:'Eb3', display:'Eb₃', y:30,  slide:4, ledgers:[],   accidental:'b' },
+  { name:'E3',  display:'E₃',  y:22,  slide:1, ledgers:[],   accidental:null },
+  { name:'F3',  display:'F₃',  y:14,  slide:1, ledgers:[6],  accidental:null },
+  { name:'G3',  display:'G₃',  y:6,   slide:4, ledgers:[6],  accidental:null },
+];
+
+// Use a practical subset — notes with clear single slide positions in good range
+const POOL = [
+  { name:'E2',  display:'E₂',  y:94,  slide:3, ledgers:[] },
+  { name:'F2',  display:'F₂',  y:86,  slide:2, ledgers:[] },
+  { name:'G2',  display:'G₂',  y:78,  slide:7, ledgers:[] },
+  { name:'Ab2', display:'Ab₂', y:78,  slide:6, ledgers:[], accidental:'b' },
+  { name:'A2',  display:'A₂',  y:70,  slide:5, ledgers:[] },
+  { name:'Bb2', display:'Bb₂', y:62,  slide:4, ledgers:[], accidental:'b' },
+  { name:'B2',  display:'B₂',  y:62,  slide:2, ledgers:[] },
+  { name:'C3',  display:'C₃',  y:54,  slide:6, ledgers:[] },
+  { name:'D3',  display:'D₃',  y:46,  slide:5, ledgers:[] },
+  { name:'Eb3', display:'Eb₃', y:46,  slide:4, ledgers:[], accidental:'b' },
+  { name:'E3',  display:'E₃',  y:38,  slide:1, ledgers:[] },
+  { name:'F3',  display:'F₃',  y:30,  slide:1, ledgers:[] },
+  { name:'Bb1', display:'Bb₁', y:110, slide:1, ledgers:['low1'], accidental:'b' },
+  { name:'B1',  display:'B₁',  y:102, slide:7, ledgers:[] },
+  { name:'C2',  display:'C₂',  y:94,  slide:6, ledgers:[] }, // same as E2 y — actually C2 is below line1
+];
+
+// Let me redo the coordinate system carefully.
+// Bass clef staff (5 lines):
+//   SVG y: line1(bottom)=100, line2=84, line3=68, line4=52, line5=36
+//   step = 16px per line, 8px per space
+// Notes on lines (bottom→top): G1, B1, D2, F2, A2
+// Notes in spaces (bottom→top): A1(below), C2, E2, G2, B2(above top)
+// Ledger below line1: E1 at y=116, F1 space at y=108
+
+// Redefine with clean coords:
+const LINE1=100, LINE2=84, LINE3=68, LINE4=52, LINE5=36;
+const SP=8; // half-step in pixels
+
+const NOTES_FINAL = [
+  // Below staff (ledger lines)
+  { name:'Eb1', display:'Eb₁', y:LINE1+SP*3,  slide:4, accidental:'b', ledger_ys:[LINE1+SP*2] },
+  { name:'E1',  display:'E₁',  y:LINE1+SP*2,  slide:3, ledger_ys:[LINE1+SP*2] },
+  { name:'F1',  display:'F₁',  y:LINE1+SP,    slide:2, ledger_ys:[LINE1+SP*2] },
+  { name:'Gb1', display:'Gb₁', y:LINE1+SP,    slide:1, accidental:'b', ledger_ys:[LINE1+SP*2] },
+  // On/near staff
+  { name:'G1',  display:'G₁',  y:LINE1,       slide:7, ledger_ys:[] },
+  { name:'Ab1', display:'Ab₁', y:LINE1,       slide:6, accidental:'b', ledger_ys:[] },
+  { name:'A1',  display:'A₁',  y:LINE1-SP,    slide:5, ledger_ys:[] },
+  { name:'Bb1', display:'Bb₁', y:LINE1-SP,    slide:4, accidental:'b', ledger_ys:[] },
+  { name:'B1',  display:'B₁',  y:LINE2,       slide:7, ledger_ys:[] },
+  { name:'C2',  display:'C₂',  y:LINE2-SP,    slide:6, ledger_ys:[] },
+  { name:'Db2', display:'Db₂', y:LINE2-SP,    slide:5, accidental:'b', ledger_ys:[] },
+  { name:'D2',  display:'D₂',  y:LINE3,       slide:5, ledger_ys:[] },
+  { name:'Eb2', display:'Eb₂', y:LINE3,       slide:4, accidental:'b', ledger_ys:[] },
+  { name:'E2',  display:'E₂',  y:LINE3-SP,    slide:3, ledger_ys:[] },
+  { name:'F2',  display:'F₂',  y:LINE4,       slide:2, ledger_ys:[] },
+  { name:'Gb2', display:'Gb₂', y:LINE4,       slide:1, accidental:'b', ledger_ys:[] },
+  { name:'G2',  display:'G₂',  y:LINE4-SP,    slide:7, ledger_ys:[] },
+  { name:'Ab2', display:'Ab₂', y:LINE4-SP,    slide:6, accidental:'b', ledger_ys:[] },
+  { name:'A2',  display:'A₂',  y:LINE5,       slide:5, ledger_ys:[] },
+  { name:'Bb2', display:'Bb₂', y:LINE5-SP,    slide:4, accidental:'b', ledger_ys:[] },
+  { name:'B2',  display:'B₂',  y:LINE5-SP,    slide:2, ledger_ys:[] },
+  // Above staff
+  { name:'C3',  display:'C₃',  y:LINE5-SP*2,  slide:6, ledger_ys:[] },
+  { name:'D3',  display:'D₃',  y:LINE5-SP*3,  slide:5, ledger_ys:[] },
+  { name:'Eb3', display:'Eb₃', y:LINE5-SP*3,  slide:4, accidental:'b', ledger_ys:[] },
+  { name:'E3',  display:'E₃',  y:LINE5-SP*4,  slide:1, ledger_ys:[LINE5-SP*4] },
+  { name:'F3',  display:'F₃',  y:LINE5-SP*5,  slide:1, ledger_ys:[LINE5-SP*4] },
+];
+
+// Practical subset for the trainer - clean, one primary slide per note
+const TRAINER_NOTES = [
+  { name:'G1',  display:'G₁',  y:LINE1,       slide:7, ledger_ys:[] },
+  { name:'A1',  display:'A₁',  y:LINE1-SP,    slide:5, ledger_ys:[] },
+  { name:'Bb1', display:'Bb₁', y:LINE1-SP,    slide:4, accidental:'b', ledger_ys:[] },
+  { name:'B1',  display:'B₁',  y:LINE2,       slide:7, ledger_ys:[] },
+  { name:'C2',  display:'C₂',  y:LINE2-SP,    slide:6, ledger_ys:[] },
+  { name:'D2',  display:'D₂',  y:LINE3,       slide:5, ledger_ys:[] },
+  { name:'Eb2', display:'Eb₂', y:LINE3,       slide:4, accidental:'b', ledger_ys:[] },
+  { name:'E2',  display:'E₂',  y:LINE3-SP,    slide:3, ledger_ys:[] },
+  { name:'F2',  display:'F₂',  y:LINE4,       slide:2, ledger_ys:[] },
+  { name:'G2',  display:'G₂',  y:LINE4-SP,    slide:7, ledger_ys:[] },
+  { name:'Ab2', display:'Ab₂', y:LINE4-SP,    slide:6, accidental:'b', ledger_ys:[] },
+  { name:'A2',  display:'A₂',  y:LINE5,       slide:5, ledger_ys:[] },
+  { name:'Bb2', display:'Bb₂', y:LINE5-SP,    slide:4, accidental:'b', ledger_ys:[] },
+  { name:'B2',  display:'B₂',  y:LINE5-SP,    slide:2, ledger_ys:[] },
+  { name:'C3',  display:'C₃',  y:LINE5-SP*2,  slide:6, ledger_ys:[] },
+  { name:'D3',  display:'D₃',  y:LINE5-SP*3,  slide:5, ledger_ys:[] },
+  { name:'Eb3', display:'Eb₃', y:LINE5-SP*3,  slide:4, accidental:'b', ledger_ys:[] },
+  { name:'E3',  display:'E₃',  y:LINE5-SP*4,  slide:1, ledger_ys:[LINE5-SP*4] },
+];
+
+// State
+let current = null;
+let answered = false;
+let scoreCorrect = 0;
+let scoreWrong = 0;
+
+// SVG helpers
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+function drawStaff() {
+  const g = document.getElementById('staff-lines');
+  g.innerHTML = '';
+  const lineYs = [LINE1, LINE2, LINE3, LINE4, LINE5];
+  lineYs.forEach(y => {
+    g.appendChild(svgEl('line', { x1:80, y1:y, x2:540, y2:y, stroke:'#1A1A1C', 'stroke-width':2 }));
+  });
+}
+
+function drawBassClef() {
+  const g = document.getElementById('bass-clef');
+  g.innerHTML = '';
+
+  // Bass clef as text glyph (Unicode 𝄢)
+  // Draw dots for bass clef
+  // Use a path-based approach: render the ♭ and dots
+
+  // Bass clef symbol via foreignObject text isn't SVG-safe cross browser.
+  // Use a simplified SVG path for the bass clef:
+  // Dot positions: line2 = 84, line3 = 68 (standard bass clef dots beside the curve)
+
+  // Bass clef body - a simplified curve
+  const clef = svgEl('text', {
+    x: 18,
+    y: LINE2 + 12,
+    'font-family': 'serif',
+    'font-size': '72',
+    fill: '#1A1A1C',
+    'font-weight': 'bold',
+  });
+  clef.textContent = '𝄢';
+  g.appendChild(clef);
+}
+
+function drawNote(note) {
+  const g = document.getElementById('note-group');
+  g.innerHTML = '';
+
+  const nx = 300; // x center of note
+  const rx = 10, ry = 7; // notehead dimensions
+
+  // Ledger lines
+  const lineYs = [LINE1, LINE2, LINE3, LINE4, LINE5];
+  if (note.ledger_ys && note.ledger_ys.length > 0) {
+    note.ledger_ys.forEach(ly => {
+      g.appendChild(svgEl('line', { x1:nx-18, y1:ly, x2:nx+18, y2:ly, stroke:'#1A1A1C', 'stroke-width':2 }));
+    });
+  }
+
+  // Extra ledger for notes far below staff
+  if (note.y > LINE1 + 4) {
+    // Need a ledger at LINE1+SP*2 (E1 level) if note is there or below
+    if (note.y >= LINE1 + SP*2 - 2) {
+      g.appendChild(svgEl('line', { x1:nx-18, y1:LINE1+SP*2, x2:nx+18, y2:LINE1+SP*2, stroke:'#1A1A1C', 'stroke-width':2 }));
+    }
+  }
+
+  // Accidental
+  if (note.accidental === 'b') {
+    const acc = svgEl('text', {
+      x: nx - rx - 16,
+      y: note.y + 5,
+      'font-family': 'serif',
+      'font-size': '22',
+      fill: '#1A1A1C',
+      'font-weight': 'bold',
+    });
+    acc.textContent = '♭';
+    g.appendChild(acc);
+  }
+
+  // Notehead (filled ellipse)
+  const head = svgEl('ellipse', {
+    cx: nx, cy: note.y,
+    rx: rx, ry: ry,
+    fill: '#1A1A1C',
+    transform: `rotate(-15, ${nx}, ${note.y})`
+  });
+  g.appendChild(head);
+
+  // Stem
+  const stemDir = note.y > LINE3 ? -1 : 1; // up if below middle, down if above
+  const stemX = stemDir === -1 ? nx + rx - 2 : nx - rx + 2;
+  const stemY1 = note.y;
+  const stemY2 = note.y + stemDir * 48;
+
+  g.appendChild(svgEl('line', {
+    x1: stemX, y1: stemY1,
+    x2: stemX, y2: stemY2,
+    stroke: '#1A1A1C', 'stroke-width': 2
+  }));
+
+  // Animate
+  g.classList.remove('note-anim');
+  void g.offsetWidth;
+  g.classList.add('note-anim');
+}
+
+function pickNote() {
+  // Avoid same note twice in a row
+  let n;
+  do {
+    n = TRAINER_NOTES[Math.floor(Math.random() * TRAINER_NOTES.length)];
+  } while (current && n.name === current.name);
+  return n;
+}
+
+function loadNote() {
+  answered = false;
+  current = pickNote();
+  drawNote(current);
+
+  document.getElementById('note-label').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('next-btn').className = 'next-btn';
+
+  // Reset buttons
+  document.querySelectorAll('.slide-btn').forEach(b => {
+    b.classList.remove('flash-correct','flash-wrong');
+    b.disabled = false;
+    b.style.opacity = '';
+  });
+}
+
+function buildButtons() {
+  const container = document.getElementById('slide-buttons');
+  for (let i = 1; i <= 7; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'slide-btn';
+    btn.textContent = i;
+    btn.dataset.slide = i;
+    btn.addEventListener('click', () => onSlide(i, btn));
+    container.appendChild(btn);
+  }
+}
+
+function onSlide(slide, btn) {
+  if (answered) return;
+  answered = true;
+
+  const correct = slide === current.slide;
+
+  // Flash chosen button
+  btn.classList.add(correct ? 'flash-correct' : 'flash-wrong');
+
+  // If wrong, also show correct
+  if (!correct) {
+    document.querySelectorAll('.slide-btn').forEach(b => {
+      if (parseInt(b.dataset.slide) === current.slide) {
+        setTimeout(() => b.classList.add('flash-correct'), 150);
+      }
+    });
+  }
+
+  // Disable all
+  document.querySelectorAll('.slide-btn').forEach(b => {
+    b.disabled = true;
+    if (b !== btn && parseInt(b.dataset.slide) !== current.slide) {
+      b.style.opacity = '0.35';
+    }
+  });
+
+  // Feedback text
+  const fb = document.getElementById('feedback');
+  if (correct) {
+    fb.textContent = `✓ Correct! ${current.display} = slide ${current.slide}`;
+    fb.className = 'feedback show correct';
+    scoreCorrect++;
+  } else {
+    fb.textContent = `✗ That's slide ${slide}. ${current.display} = slide ${current.slide}`;
+    fb.className = 'feedback show wrong';
+    scoreWrong++;
+  }
+
+  // Show note name
+  document.getElementById('note-label').textContent = current.display;
+
+  // Show score
+  document.getElementById('score-correct').textContent = scoreCorrect;
+  document.getElementById('score-wrong').textContent = scoreWrong;
+
+  // Show next button
+  document.getElementById('next-btn').className = 'next-btn visible';
+}
+
+// Init
+drawStaff();
+drawBassClef();
+buildButtons();
+loadNote();
+
+document.getElementById('next-btn').addEventListener('click', loadNote);
+</script>
+</body>
+</html>
