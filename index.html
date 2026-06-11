@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trombone Slide Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1A1A1C;
+    --parchment: #F0E6C8;
+    --gold: #C9962A;
+    --gold-light: #E8B84B;
+    --text: #F0E6C8;
+    --muted: #6B7280;
+    --correct: #4CAF82;
+    --wrong: #E05C5C;
+    --alt: #7BA7D4;
+    --slide-btn: #2E2E34;
+    --slide-hover: #3A3A42;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  header { text-align: center; margin-bottom: 28px; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    color: var(--gold-light);
+    letter-spacing: 0.02em;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .staff-card {
+    background: var(--parchment);
+    border-radius: 8px;
+    padding: 16px 28px;
+    width: 100%;
+    max-width: 620px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #staff-svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  .note-label {
+    text-align: center;
+    margin-top: 12px;
+    height: 24px;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  .feedback {
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: opacity 0.3s;
+    opacity: 0;
+    margin-top: 4px;
+    text-align: center;
+    gap: 2px;
+  }
+  .feedback.show { opacity: 1; }
+  .feedback.correct { color: var(--correct); }
+  .feedback.wrong   { color: var(--wrong); }
+  .feedback .alt-note {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--alt);
+    margin-top: 2px;
+  }
+
+  .slide-section {
+    text-align: center;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 620px;
+  }
+
+  .slide-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .slide-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .slide-btn {
+    width: 62px;
+    height: 62px;
+    border-radius: 6px;
+    background: var(--slide-btn);
+    border: 2px solid #3A3A42;
+    color: var(--text);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    position: relative;
+  }
+
+  .slide-btn:hover:not(:disabled) {
+    background: var(--slide-hover);
+    border-color: var(--gold);
+  }
+  .slide-btn:active:not(:disabled) { transform: scale(0.93); }
+
+  .slide-btn.flash-correct {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: #fff;
+    animation: popIn 0.25s ease;
+  }
+  .slide-btn.flash-alt {
+    background: var(--alt);
+    border-color: var(--alt);
+    color: #fff;
+    animation: popIn 0.25s ease;
+  }
+  .slide-btn.flash-wrong {
+    background: var(--wrong);
+    border-color: var(--wrong);
+    color: #fff;
+    animation: shake 0.3s ease;
+  }
+
+  /* Small "alt" tag on alternate-position buttons after reveal */
+  .slide-btn .alt-tag {
+    display: none;
+    position: absolute;
+    bottom: 3px;
+    right: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.48rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    font-weight: 600;
+  }
+  .slide-btn.flash-alt .alt-tag { display: block; }
+
+  @keyframes popIn {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.14); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%      { transform: translateX(-5px); }
+    75%      { transform: translateX(5px); }
+  }
+
+  .score-bar {
+    display: flex;
+    gap: 28px;
+    justify-content: center;
+    margin-top: 18px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .score-bar span { color: var(--text); font-weight: 600; font-size: 0.98rem; }
+
+  .next-btn {
+    margin-top: 18px;
+    background: none;
+    border: 1.5px solid var(--gold);
+    color: var(--gold-light);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 9px 26px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .next-btn.visible { opacity: 1; pointer-events: all; }
+  .next-btn:hover { background: var(--gold); color: #1A1A1C; }
+
+  @keyframes noteIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .note-anim { animation: noteIn 0.32s ease forwards; }
+
+  @media (max-width: 480px) {
+    .slide-btn { width: 50px; height: 50px; font-size: 1.2rem; }
+    .staff-card { padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Trombone Slide Trainer</h1>
+  <p class="subtitle">Bass Clef · Bb Trombone</p>
+</header>
+
+<div class="staff-card">
+  <svg id="staff-svg" viewBox="0 0 560 160" xmlns="http://www.w3.org/2000/svg">
+    <g id="staff-lines"></g>
+    <g id="bass-clef"></g>
+    <g id="note-group"></g>
+  </svg>
+</div>
+
+<div class="note-label" id="note-label"></div>
+<div class="feedback" id="feedback"></div>
+
+<div class="slide-section">
+  <div class="slide-label">Choose your slide position</div>
+  <div class="slide-buttons" id="slide-buttons"></div>
+</div>
+
+<button class="next-btn" id="next-btn">Next note →</button>
+
+<div class="score-bar">
+  ✓ <span id="score-correct">0</span> &nbsp;|&nbsp; ✗ <span id="score-wrong">0</span>
+</div>
+
+<script>
+/*
+  Bb TROMBONE SLIDE POSITION CHART (Concert Pitch)
+  Primary position listed first, alternates after.
+  
+  Full harmonic series by position:
+    1: Bb/A#  (all octaves), F (above staff)
+    2: A,     Eb/D# (upper)
+    3: Ab/G#, D  (upper)
+    4: G,     Db/C# (upper)
+    5: Gb/F#, C  (upper)
+    6: F,     B  (upper)  — also: A (T position / alt 2 on trigger instruments)
+    7: E,     Bb (lower octave partial)
+
+  Alternates (common):
+    Bb/A# = 1 primary;  6 alt (trigger/T on Bb trigger trombones)
+    A     = 2 primary;  6 alt (trigger)
+    Ab/G# = 3 primary;  7T alt
+    G     = 4 primary;  (no common alt in straight range)
+    Gb/F# = 5 primary;  (no common alt)
+    F     = 6 primary;  1 alt (in upper register partial)
+    E     = 7 primary;  1 alt (in register above staff)
+    Eb    = 4 primary;  (in upper range); 3 primary lower octave
+    D     = 5 primary; (upper register)
+    Db    = 6 primary; (upper)
+    C     = 6 primary; (upper)
+    B     = 7 primary; (lower)
+    Bb2   = 1 primary, 4 alt (lower partial)
+
+  For this trainer we use the most common real-world positions
+  and accept ANY position listed in the `slides` array as correct.
+  The first entry is the "primary" shown in feedback.
+*/
+
+const LINE1=108, LINE2=92, LINE3=76, LINE4=60, LINE5=44;
+const SP=8;
+
+// slides: [primary, ...alternates]  — any is accepted as correct
+const TRAINER_NOTES = [
+  // ── Below staff ──
+  { name:'E1',  display:'E₁',  y:LINE1+SP*2, slides:[7],    ledger_ys:[LINE1+SP*2] },
+  { name:'F1',  display:'F₁',  y:LINE1+SP,   slides:[6],    ledger_ys:[LINE1+SP*2] },
+  { name:'Gb1', display:'Gb₁', y:LINE1+SP,   slides:[5],    accidental:'b', ledger_ys:[LINE1+SP*2] },
+
+  // ── On staff ──
+  { name:'G1',  display:'G₁',  y:LINE1,      slides:[4],    ledger_ys:[] },
+  { name:'Ab1', display:'Ab₁', y:LINE1,      slides:[3],    accidental:'b', ledger_ys:[] },
+  { name:'A1',  display:'A₁',  y:LINE1-SP,   slides:[2,6],  ledger_ys:[] },
+  { name:'Bb1', display:'Bb₁', y:LINE1-SP,   slides:[1,6],  accidental:'b', ledger_ys:[] },
+  { name:'B1',  display:'B₁',  y:LINE2,      slides:[6],    ledger_ys:[] },  // 6th partial pos6 = B
+  { name:'C2',  display:'C₂',  y:LINE2-SP,   slides:[5],    ledger_ys:[] },
+  { name:'Db2', display:'Db₂', y:LINE2-SP,   slides:[4],    accidental:'b', ledger_ys:[] },
+  { name:'D2',  display:'D₂',  y:LINE3,      slides:[3],    ledger_ys:[] },
+  { name:'Eb2', display:'Eb₂', y:LINE3,      slides:[2],    accidental:'b', ledger_ys:[] },
+  { name:'E2',  display:'E₂',  y:LINE3-SP,   slides:[1],    ledger_ys:[] },
+  { name:'F2',  display:'F₂',  y:LINE4,      slides:[6],    ledger_ys:[] },
+  { name:'Gb2', display:'Gb₂', y:LINE4,      slides:[5],    accidental:'b', ledger_ys:[] },
+  { name:'G2',  display:'G₂',  y:LINE4-SP,   slides:[4],    ledger_ys:[] },
+  { name:'Ab2', display:'Ab₂', y:LINE4-SP,   slides:[3],    accidental:'b', ledger_ys:[] },
+  { name:'A2',  display:'A₂',  y:LINE5,      slides:[2,6],  ledger_ys:[] },
+  { name:'Bb2', display:'Bb₂', y:LINE5-SP,   slides:[1,4],  accidental:'b', ledger_ys:[] },
+
+  // ── Above staff ──
+  { name:'B2',  display:'B₂',  y:LINE5-SP,   slides:[6],    ledger_ys:[] },
+  { name:'C3',  display:'C₃',  y:LINE5-SP*2, slides:[5],    ledger_ys:[] },
+  { name:'Db3', display:'Db₃', y:LINE5-SP*2, slides:[4],    accidental:'b', ledger_ys:[] },
+  { name:'D3',  display:'D₃',  y:LINE5-SP*3, slides:[3],    ledger_ys:[] },
+  { name:'Eb3', display:'Eb₃', y:LINE5-SP*3, slides:[2],    accidental:'b', ledger_ys:[] },
+  { name:'E3',  display:'E₃',  y:LINE5-SP*4, slides:[1,7],  ledger_ys:[LINE5-SP*4] },
+  { name:'F3',  display:'F₃',  y:LINE5-SP*5, slides:[1],    ledger_ys:[LINE5-SP*4] },
+];
+
+// Notes that share a staff position — need careful y disambiguation
+// Bb1 and A1 both sit in the same space but have accidental to distinguish
+// B2 and Bb2 share y=LINE5-SP — handled by accidental
+
+let current = null;
+let answered = false;
+let scoreCorrect = 0;
+let scoreWrong = 0;
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+function drawStaff() {
+  const g = document.getElementById('staff-lines');
+  g.innerHTML = '';
+  [LINE1,LINE2,LINE3,LINE4,LINE5].forEach(y => {
+    g.appendChild(svgEl('line', { x1:82, y1:y, x2:540, y2:y, stroke:'#1A1A1C', 'stroke-width':2 }));
+  });
+}
+
+function drawBassClef() {
+  const g = document.getElementById('bass-clef');
+  g.innerHTML = '';
+  const clef = svgEl('text', {
+    x: 12, y: LINE2 + 14,
+    'font-family': 'serif',
+    'font-size': '76',
+    fill: '#1A1A1C',
+    'font-weight': 'bold',
+  });
+  clef.textContent = '𝄢';
+  g.appendChild(clef);
+}
+
+function drawNote(note) {
+  const g = document.getElementById('note-group');
+  g.innerHTML = '';
+
+  const nx = 300;
+  const rx = 10, ry = 7;
+
+  // Ledger lines
+  (note.ledger_ys || []).forEach(ly => {
+    g.appendChild(svgEl('line', { x1:nx-18, y1:ly, x2:nx+18, y2:ly, stroke:'#1A1A1C', 'stroke-width':2 }));
+  });
+
+  // Extra ledger below staff for very low notes
+  if (note.y > LINE1 + 4 && note.y < LINE1 + SP*2 - 2) {
+    // note is in space below staff — needs ledger at LINE1+SP*2 only if it IS that ledger line
+  }
+  if (note.y >= LINE1 + SP*2 - 1 && !(note.ledger_ys||[]).includes(LINE1+SP*2)) {
+    g.appendChild(svgEl('line', { x1:nx-18, y1:LINE1+SP*2, x2:nx+18, y2:LINE1+SP*2, stroke:'#1A1A1C', 'stroke-width':2 }));
+  }
+
+  // Accidental
+  if (note.accidental === 'b') {
+    const acc = svgEl('text', {
+      x: nx - rx - 16,
+      y: note.y + 5,
+      'font-family': 'serif',
+      'font-size': '22',
+      fill: '#1A1A1C',
+      'font-weight': 'bold',
+    });
+    acc.textContent = '♭';
+    g.appendChild(acc);
+  }
+
+  // Notehead
+  g.appendChild(svgEl('ellipse', {
+    cx: nx, cy: note.y,
+    rx, ry,
+    fill: '#1A1A1C',
+    transform: `rotate(-15, ${nx}, ${note.y})`
+  }));
+
+  // Stem
+  const stemUp = note.y >= LINE3;
+  const stemX = stemUp ? nx + rx - 2 : nx - rx + 2;
+  g.appendChild(svgEl('line', {
+    x1: stemX, y1: note.y,
+    x2: stemX, y2: note.y + (stemUp ? -50 : 50),
+    stroke: '#1A1A1C', 'stroke-width': 2
+  }));
+
+  g.classList.remove('note-anim');
+  void g.offsetWidth;
+  g.classList.add('note-anim');
+}
+
+function pickNote() {
+  let n;
+  do { n = TRAINER_NOTES[Math.floor(Math.random() * TRAINER_NOTES.length)]; }
+  while (current && n.name === current.name);
+  return n;
+}
+
+function loadNote() {
+  answered = false;
+  current = pickNote();
+  drawNote(current);
+
+  document.getElementById('note-label').textContent = '';
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+  document.getElementById('next-btn').className = 'next-btn';
+
+  document.querySelectorAll('.slide-btn').forEach(b => {
+    b.classList.remove('flash-correct','flash-wrong','flash-alt');
+    b.disabled = false;
+    b.style.opacity = '';
+    b.querySelector('.alt-tag').style.display = 'none';
+  });
+}
+
+function buildButtons() {
+  const container = document.getElementById('slide-buttons');
+  for (let i = 1; i <= 7; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'slide-btn';
+    btn.dataset.slide = i;
+
+    const num = document.createElement('span');
+    num.textContent = i;
+    btn.appendChild(num);
+
+    const tag = document.createElement('span');
+    tag.className = 'alt-tag';
+    tag.textContent = 'alt';
+    btn.appendChild(tag);
+
+    btn.addEventListener('click', () => onSlide(i, btn));
+    container.appendChild(btn);
+  }
+}
+
+function onSlide(chosen, btn) {
+  if (answered) return;
+  answered = true;
+
+  const primary = current.slides[0];
+  const alts    = current.slides.slice(1);
+  const isCorrect = current.slides.includes(chosen);
+  const isPrimary = chosen === primary;
+  const isAlt     = alts.includes(chosen);
+
+  // Flash chosen button
+  if (isPrimary) btn.classList.add('flash-correct');
+  else if (isAlt) btn.classList.add('flash-alt');
+  else btn.classList.add('flash-wrong');
+
+  // Always highlight primary in green
+  document.querySelectorAll('.slide-btn').forEach(b => {
+    const s = parseInt(b.dataset.slide);
+    if (s === primary && b !== btn) {
+      setTimeout(() => b.classList.add('flash-correct'), 100);
+    }
+    // Highlight alt positions in blue
+    if (alts.includes(s) && b !== btn) {
+      setTimeout(() => {
+        b.classList.add('flash-alt');
+        b.querySelector('.alt-tag').style.display = 'block';
+      }, 100);
+    }
+  });
+
+  // Dim unrelated buttons
+  document.querySelectorAll('.slide-btn').forEach(b => {
+    b.disabled = true;
+    const s = parseInt(b.dataset.slide);
+    if (!current.slides.includes(s) && b !== btn) b.style.opacity = '0.3';
+  });
+
+  // Feedback text
+  const fb = document.getElementById('feedback');
+  let mainLine = '';
+  let altLine  = '';
+
+  if (isCorrect) {
+    const posLabel = isPrimary ? `slide ${primary}` : `slide ${chosen} (alt)`;
+    mainLine = `✓ ${current.display} — ${posLabel}`;
+    if (alts.length > 0) {
+      altLine = `Also valid: ${current.slides.map(s => `slide ${s}`).join(', ')}`;
+    }
+    fb.className = 'feedback show correct';
+    scoreCorrect++;
+  } else {
+    mainLine = `✗ Slide ${chosen} is wrong`;
+    const allPos = current.slides.map(s => `slide ${s}`).join(' or ');
+    altLine = `${current.display} = ${allPos}`;
+    fb.className = 'feedback show wrong';
+    scoreWrong++;
+  }
+
+  fb.innerHTML = `<span>${mainLine}</span>`;
+  if (altLine) {
+    const sub = document.createElement('span');
+    sub.className = 'alt-note';
+    sub.textContent = altLine;
+    fb.appendChild(sub);
+  }
+
+  document.getElementById('note-label').textContent = current.display;
+  document.getElementById('score-correct').textContent = scoreCorrect;
+  document.getElementById('score-wrong').textContent = scoreWrong;
+  document.getElementById('next-btn').className = 'next-btn visible';
+}
+
+// Init
+drawStaff();
+drawBassClef();
+buildButtons();
+loadNote();
+
+document.getElementById('next-btn').addEventListener('click', loadNote);
+</script>
+</body>
+</html>
