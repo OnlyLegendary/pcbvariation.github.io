@@ -36,6 +36,16 @@
   /* ── LAYOUT ── */
   .page { position: relative; z-index: 1; }
 
+  /* Dark scrim so text is always legible over the shader */
+  .page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 8, 20, 0.55);
+    z-index: -1;
+    pointer-events: none;
+  }
+
   /* ── NAV ── */
   nav {
     display: flex;
@@ -99,7 +109,7 @@
   }
   .hero-sub {
     font-size: 1.15rem;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.85);
     max-width: 480px;
     margin: 1.4rem auto 2.4rem;
     line-height: 1.65;
@@ -168,12 +178,12 @@
     gap: 1rem;
   }
   .service-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(96,184,255,0.15);
+    background: rgba(4, 10, 25, 0.65);
+    border: 1px solid rgba(96,184,255,0.2);
     border-radius: 1rem;
     padding: 1.6rem 1.4rem;
     transition: border-color 0.2s, background 0.2s;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
   }
   .service-card:hover {
     background: rgba(96,184,255,0.07);
@@ -181,7 +191,7 @@
   }
   .service-icon { font-size: 2rem; margin-bottom: 0.8rem; }
   .service-card h3 { font-size: 1.05rem; font-weight: 600; color: var(--white); margin-bottom: 0.3rem; }
-  .service-card p { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 0.9rem; }
+  .service-card p { font-size: 0.88rem; color: rgba(255,255,255,0.75); line-height: 1.5; margin-bottom: 0.9rem; }
   .price-tag {
     display: inline-block;
     background: rgba(45,142,232,0.18);
@@ -217,7 +227,7 @@
     display: flex; align-items: center; justify-content: center;
   }
   .step-body h4 { font-size: 1rem; font-weight: 600; color: var(--white); margin-bottom: 0.2rem; }
-  .step-body p { font-size: 0.9rem; color: rgba(255,255,255,0.55); line-height: 1.55; }
+  .step-body p { font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.55; }
 
   /* ── BOOKING ── */
   #book {
@@ -408,7 +418,7 @@
 
   <div class="phone-strip">
     <p>Prefer to reach out directly?</p>
-    <a href="mailto:samandsethpressurewash@gmail.com">sethandsampressurewashing@gmail.com</a>
+    <a href="mailto:sethandsampressurewashing@gmail.com">sethandsampressurewashing@gmail.com</a>
     <p style="margin-top:0.5rem; font-size:0.85rem; opacity:0.7;">Mount Dora, FL &nbsp;·&nbsp; Sam &amp; Seth</p>
   </div>
 
