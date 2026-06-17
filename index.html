@@ -624,7 +624,7 @@
   <!-- PHONE -->
   <div class="phone-strip">
     <p>Prefer to reach out directly?</p>
-    <a href="mailto:samandsethpressurewash@gmail.com">sethandsampressurewashing@gmail.com</a>
+    <a href="mailto:samandsethpressurewash@gmail.com">samandsethpressurewash@gmail.com</a>
     <p style="margin-top:0.5rem; font-size:0.85rem; opacity:0.75;">Mount Dora, FL &nbsp;·&nbsp; Sam &amp; Seth</p>
   </div>
 
@@ -640,7 +640,7 @@
         <span>We accept <strong>cash only</strong>. Please have exact payment ready when the job is complete.</span>
       </div>
 
-      <form id="bookingForm" onsubmit="handleSubmit(event)">
+      <form id="bookingForm" action="https://formspree.io/f/xgobqjwq" method="POST" onsubmit="handleSubmit(event)">
 
         <div class="form-row">
           <div class="form-group">
@@ -698,30 +698,29 @@
 </div>
 
 <script>
-function handleSubmit(e) {
+async function handleSubmit(e) {
   e.preventDefault();
-  const f = e.target;
-  const name     = f.name.value;
-  const email    = f.email.value;
-  const address  = f.address.value;
-  const service  = f.service.value;
-  const avail    = f.availability.value;
-  const details  = f.details.value;
-
-  const body = `Name: ${name}
-Email: ${email}
-Address: ${address}
-Service: ${service}
-Availability: ${avail}
-Details: ${details || 'None'}`;
-
-  const subject = encodeURIComponent(`Booking Request – ${service}`);
-  const bodyEnc = encodeURIComponent(body);
-
-  window.location.href = `mailto:samandsethpressurewashing@gmail.com?subject=${subject}&body=${bodyEnc}`;
-
-  document.getElementById('bookingForm').style.display = 'none';
-  document.getElementById('successMsg').style.display = 'block';
+  const form = e.target;
+  const btn = form.querySelector('.submit-btn');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  try {
+    const resp = await fetch('https://formspree.io/f/xgobqjwq', {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (resp.ok) {
+      form.style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+    } else {
+      btn.textContent = 'Something went wrong — try again';
+      btn.disabled = false;
+    }
+  } catch {
+    btn.textContent = 'Network error — try again';
+    btn.disabled = false;
+  }
 }
 </script>
 
